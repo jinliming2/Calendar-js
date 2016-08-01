@@ -16,7 +16,32 @@
     <script src="./js/calendar.js"></script>
 </head>
 <body>
-<div id="calendar" style="width: 600px; height: 400px;"></div>
+<div id="calendar" style="width: 600px; height: 400px;">
+    <div class="calendar_js_title calendar_js_b_dark"></div>
+    <div class="calendar_js_content calendar_js_b_light">
+        <div class="calendar_js_row">
+            <div class="calendar_js_column calendar_js_o_light"></div>
+            <div class="calendar_js_column calendar_js_o_light"></div>
+            <div class="calendar_js_column calendar_js_o_light"></div>
+            <div class="calendar_js_column calendar_js_o_normal">
+                <div class="calendar_js_date">81</div>
+                <div class="calendar_js_lunar">廿三</div>
+                <div class="calendar_js_festival">国际儿童节</div>
+            </div>
+            <div class="calendar_js_column calendar_js_o_normal">
+                <div class="calendar_js_date">81</div>
+                <div class="calendar_js_lunar">廿三</div>
+                <div class="calendar_js_festival"></div>
+            </div>
+            <div class="calendar_js_column calendar_js_o_normal"></div>
+            <div class="calendar_js_column calendar_js_o_normal"></div>
+        </div>
+        <div class="calendar_js_row"></div>
+        <div class="calendar_js_row"></div>
+        <div class="calendar_js_row"></div>
+        <div class="calendar_js_row"></div>
+    </div>
+</div>
 <script>
     let obj = Calendar("calendar");  //构造Calendar对象
 </script>

@@ -25,6 +25,7 @@
 ```html
 <div id="calendar" style="width: 600px; height: 400px;"></div>
 ```
+> 注意：宽度与高度设置过小可能影响显示效果！
 4. 使用div容器的id构造Calendar对象。
 ```javascript
 let obj = Calendar("calendar");
