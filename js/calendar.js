@@ -17,11 +17,84 @@
          */
         this._container = Container(id);
         //初始化
-        this._container.addClass("calendar_js");
+        this._container.addClass("calendar");
+        Selector(document.getElementById("years_select"));
+        Selector(document.getElementById("months_select"));
     }
 
     /************* 以下是本库提供的公有方法 *************/
     /************* 以上是本库提供的公有方法 *************/
+
+    /**
+     * 选择器类
+     * @param obj 容器对象
+     * @return {Selector}
+     * @constructor {Selector} 选择器对象
+     */
+    function Selector(obj) {
+        /**
+         * 选择器类
+         * @param obj 容器对象
+         * @constructor
+         */
+        function Selector(obj) {
+            this._root = obj.createShadowRoot();
+            let style = document.createElement("style");
+            style.innerHTML = `
+:host {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+:host * {
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+:host > div {
+    margin: 0;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+}
+`;
+            let leftButton = document.createElement("div");
+            leftButton.innerHTML = `
+<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 10L17.32 20V0Z"></path>
+</svg>
+`;
+            let mainDisplay = document.createElement("div");
+            let content = document.createElement("content");
+            let downButton = document.createElement("div");
+            downButton.innerHTML = `
+<svg width="10" height="10" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0H20L10 17.32Z"></path>
+</svg>
+`;
+            mainDisplay.appendChild(content);
+            mainDisplay.appendChild(downButton);
+            let rightButton = document.createElement("div");
+            rightButton.innerHTML = `
+<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0V20L17.32 10Z"></path>
+</svg>
+`;
+            this._root.appendChild(style);
+            this._root.appendChild(leftButton);
+            this._root.appendChild(mainDisplay);
+            this._root.appendChild(rightButton);
+            console.log(this._root);
+        }
+
+        return new Selector(obj);
+    }
 
     /**
      * 容器类
