@@ -37,6 +37,10 @@
 .title {
     width: 100%;
     height: 15%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .content, .years, .months {

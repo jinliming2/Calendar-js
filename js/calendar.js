@@ -48,12 +48,12 @@
     align-items: center;
 }
 
-:host * {
+* {
     margin: 0 5px;
     cursor: pointer;
 }
 
-:host > div {
+div {
     margin: 0;
     font-weight: bold;
     font-size: 18px;
