@@ -4,43 +4,12 @@
  */
 "use strict";
 (function(window) {
+    /************* Begin of Constants Definition *************/
     /**
-     * 日历类
-     * @param {string|HTMLElement} id 容器ID
-     * @constructor
+     * Selector's Style, Use ":host" For The Root's Style
+     * @type {string}
      */
-    function Calendar(id) {
-        /**
-         * 布局容器
-         * @type {Container}
-         * @private
-         */
-        this._container = Container(id);
-        //初始化
-        this._container.addClass("calendar");
-        Selector(document.getElementById("years_select"));
-        Selector(document.getElementById("months_select"));
-    }
-
-    /************* 以下是本库提供的公有方法 *************/
-    /************* 以上是本库提供的公有方法 *************/
-
-    /**
-     * 选择器类
-     * @param obj 容器对象
-     * @return {Selector}
-     * @constructor {Selector} 选择器对象
-     */
-    function Selector(obj) {
-        /**
-         * 选择器类
-         * @param obj 容器对象
-         * @constructor
-         */
-        function Selector(obj) {
-            this._root = obj.createShadowRoot();
-            let style = document.createElement("style");
-            style.innerHTML = `
+    const SELECTOR_STYLE = `
 :host {
     display: flex;
     flex-flow: row nowrap;
@@ -64,28 +33,56 @@ div {
     cursor: default;
 }
 `;
-            let leftButton = document.createElement("div");
-            leftButton.innerHTML = `
+    /**
+     * SVG Button For Selector's Left Button
+     * @type {string}
+     */
+    const SELECTOR_LEFT_BUTTON = `
 <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 10L17.32 20V0Z"></path>
 </svg>
 `;
-            let mainDisplay = document.createElement("div");
-            let content = document.createElement("content");
-            let downButton = document.createElement("div");
-            downButton.innerHTML = `
+    /**
+     * SVG Button For Selector's Down Button
+     * @type {string}
+     */
+    const SELECTOR_DOWN_BUTTON = `
 <svg width="10" height="10" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 0H20L10 17.32Z"></path>
 </svg>
 `;
-            mainDisplay.appendChild(content);
-            mainDisplay.appendChild(downButton);
-            let rightButton = document.createElement("div");
-            rightButton.innerHTML = `
+    /**
+     * SVG Button For Selector's Right Button
+     * @type {string}
+     */
+    const SELECTOR_RIGHT_BUTTON = `
 <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 0V20L17.32 10Z"></path>
 </svg>
 `;
+    /************* End of Constants Definition *************/
+    /************* Begin of Tool Classes Definition *************/
+    /**
+     * Selector - Part of The Calendar to Select Month or Year
+     */
+    class Selector {
+        /**
+         * @param {HTMLElement} obj Container
+         */
+        constructor(obj) {
+            this._root = obj.createShadowRoot();
+            let style = document.createElement("style");
+            style.innerHTML = SELECTOR_STYLE;
+            let leftButton = document.createElement("div");
+            leftButton.innerHTML = SELECTOR_LEFT_BUTTON;
+            let mainDisplay = document.createElement("div");
+            let content = document.createElement("content");
+            let downButton = document.createElement("div");
+            downButton.innerHTML = SELECTOR_DOWN_BUTTON;
+            mainDisplay.appendChild(content);
+            mainDisplay.appendChild(downButton);
+            let rightButton = document.createElement("div");
+            rightButton.innerHTML = SELECTOR_RIGHT_BUTTON;
             this._root.appendChild(style);
             this._root.appendChild(leftButton);
             this._root.appendChild(mainDisplay);
@@ -93,22 +90,17 @@ div {
             console.log(this._root);
         }
 
-        return new Selector(obj);
+        setLeftButtonEvent(eventName, event) {
+        }
     }
-
     /**
-     * 容器类
-     * @param id
-     * @returns {Container} 容器对象
+     * Container - A Tool To Control Html Elements
      */
-    function Container(id) {
+    class Container {
         /**
-         * 容器类
-         * @param {string|HTMLElement} id 容器ID
-         * @constructor
+         * @param {string|HTMLElement} id Container's ID
          */
-        function Container(id) {
-            //容器
+        constructor(id) {
             if(typeof id === "string") {
                 this._container = document.getElementById(id);
             } else {
@@ -117,12 +109,13 @@ div {
         }
 
         /**
-         * 取元素计算后样式
-         * @param {string} property 样式
-         * @param {HTMLElement} [_element] 外部元素
-         * @returns {string} 值
+         * Get Calculated Style
+         * @param {string} property
+         * @param {HTMLElement} [_element]
+         * @return {string} Style String
+         * @private
          */
-        Container.prototype._getProperty = function(property, _element) {
+        _getProperty(property, _element) {
             if(_element) {
                 if(_element.currentStyle) {
                     return _element.currentStyle.getAttribute(property);
@@ -136,73 +129,88 @@ div {
                     return getComputedStyle(this._container, null).getPropertyValue(property);
                 }
             }
-        };
+        }
 
         /**
-         * 是否存在class
-         * @param {string} cls 类名
-         * @returns {boolean}
+         * Test If Class is Exists
+         * @param {string} cls Class Name
+         * @return {boolean}
          */
-        Container.prototype.hasClass = function(cls) {
+        hasClass(cls) {
             return this._container.classList.contains(cls);
-        };
+        }
 
         /**
-         * 添加class
-         * @param {string} cls 类名
-         * @returns {Container} 当前链式调用对象
+         * Add Class to The Container
+         * @param {string} cls Class Name
+         * @returns {Container} This
          */
-        Container.prototype.addClass = function(cls) {
+        addClass(cls) {
             this._container.classList.add(cls);
             return this;
-        };
+        }
 
         /**
-         * 删除class
-         * @param {string} cls 类名
-         * @returns {Container} 当前链式调用对象
+         * Remove a Class From The Container
+         * @param {string} cls Class Name
+         * @return {Container} This
          */
-        Container.prototype.removeClass = function(cls) {
+        removeClass(cls) {
             this._container.classList.remove(cls);
             return this;
-        };
+        }
 
         /**
-         * 取样式
-         * @param {string} property 样式
-         * @param {HTMLElement} [_element] 外部元素
-         * @returns {string} 值
+         * Get Style String
+         * @param {string} property
+         * @param {HTMLElement} [_element]
+         * @return {string} Style String
          */
-        Container.prototype.css = function(property, _element) {
+        css(property, _element) {
             if(_element) {
                 return this._getProperty(property, _element);
             } else {
                 return this._getProperty(property);
             }
-        };
+        }
 
         /**
-         * 取当前容器对象
-         * @returns {HTMLElement} 容器对象
+         * Get This Html Element
+         * @return {HTMLElement|*}
          */
-        Container.prototype.getContainer = function() {
+        getContainer() {
             return this._container;
-        };
+        }
+    }
+    /************* End of Tool Classes Definition *************/
+    /**
+     * Calendar Library
+     */
+    class Calendar {
+        /**
+         * @param {string|HTMLElement} id
+         */
+        constructor(id) {
+            /**
+             * 布局容器
+             * @type {Container}
+             * @private
+             */
+            this._container = new Container(id);
+            //初始化
+            this._container.addClass("calendar");
+            new Selector(document.getElementById("years_select"));
+            new Selector(document.getElementById("months_select"));
+        }
 
-        return new Container(id);
+        /************* Begin of Public Functions *************/
+        /************* End of Public Functions *************/
+        /************* Begin of Private Functions *************/
+        /************* End of Private Functions *************/
     }
 
-    //实例化
+    //Set up
     if(typeof window.Calendar === 'undefined') {
-        //只有当未初始化时才实例化
-        /**
-         * 日历类
-         * @param {string|HTMLElement} id 容器ID
-         * @returns {Calendar} 相册对象
-         * @constructor
-         */
-        window.Calendar = function(id) {
-            return new Calendar(id);
-        };
+        window.Calendar = Calendar;
     }
 })(window);
