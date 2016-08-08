@@ -70,27 +70,24 @@ div {
          * @param {HTMLElement} obj Container
          */
         constructor(obj) {
+            //noinspection JSUnresolvedFunction
             this._root = obj.createShadowRoot();
             let style = document.createElement("style");
             style.innerHTML = SELECTOR_STYLE;
-            let leftButton = document.createElement("div");
-            leftButton.innerHTML = SELECTOR_LEFT_BUTTON;
+            this.leftButton = document.createElement("div");
+            this.leftButton.innerHTML = SELECTOR_LEFT_BUTTON;
             let mainDisplay = document.createElement("div");
             let content = document.createElement("content");
-            let downButton = document.createElement("div");
-            downButton.innerHTML = SELECTOR_DOWN_BUTTON;
+            this.downButton = document.createElement("div");
+            this.downButton.innerHTML = SELECTOR_DOWN_BUTTON;
             mainDisplay.appendChild(content);
-            mainDisplay.appendChild(downButton);
-            let rightButton = document.createElement("div");
-            rightButton.innerHTML = SELECTOR_RIGHT_BUTTON;
+            mainDisplay.appendChild(this.downButton);
+            this.rightButton = document.createElement("div");
+            this.rightButton.innerHTML = SELECTOR_RIGHT_BUTTON;
             this._root.appendChild(style);
-            this._root.appendChild(leftButton);
+            this._root.appendChild(this.leftButton);
             this._root.appendChild(mainDisplay);
-            this._root.appendChild(rightButton);
-            console.log(this._root);
-        }
-
-        setLeftButtonEvent(eventName, event) {
+            this._root.appendChild(this.rightButton);
         }
     }
     /**
