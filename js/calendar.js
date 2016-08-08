@@ -212,5 +212,7 @@ div {
     //Set up
     if(typeof window.Calendar === 'undefined') {
         window.Calendar = Calendar;
+    } else {
+        throw "window.Calendar Namespace Conflict!";
     }
 })(window);

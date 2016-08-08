@@ -16,7 +16,7 @@
 
 > <span style="font-size: 22px; font-weight: bold; color: orange;">使用到Shadow Dom技术，目前Chrome 35+、Opera 22+、Safari 10可以直接使用，FireFox 29+需要在[about:config](about:config)中开启dom.webcomponents.enabled开关才可以使用。</span>
 
-第一次完全使用英文注释，如有英语语法错误，请告知，谢谢！
+***第一次完全使用英文注释，如有英语语法错误，请告知，谢谢！***
 
 ## Usage 使用方法
 1. 从GitHub Release[![GitHub Release](https://img.shields.io/github/release/772807886/Calendar-js.svg)](https://github.com/772807886/Calendar-js/releases)下载最新版本类库，包含压缩版的calendar.min.css、calendar.min.js与未压缩版的calendar.css、calendar.js。
