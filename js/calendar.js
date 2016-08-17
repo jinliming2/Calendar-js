@@ -84,6 +84,141 @@ div {
     <path d="M0 0V20L17.32 10Z"></path>
 </svg>
 `;
+    const CALENDAR_COLOUR = `
+.b_dark {
+    background: black;
+}
+
+.b_light {
+    background: #EEE;
+}
+
+.c_light {
+    color: white;
+}
+
+.f_light {
+    fill: white;
+}
+
+.o_normal {
+    outline-color: #888!important;
+}
+
+.o_light {
+    outline-color: lightgray!important;
+}
+`;
+    const CALENDAR_STYLE = `
+:host {
+    outline: 3px double black;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.hide {
+    display: none;
+}
+
+.title {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.content, .years, .months {
+    width: 100%;
+    height: 85%;
+}
+
+.content_row {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.content_column {
+    width: 14.285%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    outline: 1px solid;
+    text-align: center;
+    word-wrap: break-word;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.date {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: serif;
+}
+
+.lunar {
+    font-size: 12px;
+    min-height: 14px;
+}
+
+.festival {
+    font-size: 12px;
+    min-height: 14px;
+}
+
+.lastMonth {
+    opacity: 0.3;
+}
+
+.nextMonth {
+    opacity: 0.5;
+}
+
+.center_text {
+    font-size: 24px;
+    text-align: center;
+    word-wrap: break-word;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.months_row, .years_row {
+    width: 100%;
+    height: 33.333%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.months_column {
+    width: 25%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    outline: 1px solid;
+    cursor: pointer;
+}
+
+.years_column {
+    width: 20%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    outline: 1px solid;
+    cursor: pointer;
+}
+`;
     /************* End of Constants Definition *************/
     /************* Begin of Tool Classes Definition *************/
     /**
@@ -392,6 +527,7 @@ div {
          * @param {number} year
          * @param {number} month Based on 0
          * @param {number} date
+         * @return {{zodiac: string, ganZhiYear: string, ganZhiMonth: string, ganZhiDay: string, term: string, lunarYear: number, lunarMonth: number, lunarDay: number, lunarMonthName: string, lunarDayName: string, lunarLeapMonth: number}}
          */
         static getLunar(year, month, date) {
             this.__cacheSetYear(year);
@@ -487,9 +623,12 @@ div {
      */
     class Selector {
         /**
-         * @param {HTMLElement} obj Container
+         * @param {HTMLElement|Container} obj Container
          */
         constructor(obj) {
+            if(obj instanceof Container) {
+                obj = obj.getContainer();
+            }
             //noinspection JSUnresolvedFunction
             this._root = obj.createShadowRoot();
             //Style Sheet
@@ -520,10 +659,12 @@ div {
      */
     class Container {
         /**
-         * @param {string|HTMLElement} id Container's ID
+         * @param {string|HTMLElement} [id] Container's ID
          */
         constructor(id) {
-            if(typeof id === "string") {
+            if(!id) {
+                this._container = document.createElement("div");
+            } else if(typeof id === "string") {
                 this._container = document.getElementById(id);
             } else {
                 this._container = id;
@@ -576,17 +717,41 @@ div {
         }
 
         /**
-         * Get Style String
+         * Get or Set Style String
          * @param {string} property
-         * @param {HTMLElement} [_element]
+         * @param {string} [value]
          * @return {string} Style String
          */
-        css(property, _element) {
+        css(property, value) {
+            if(value) {
+                this._container.style[property] = value;
+            } else {
+                return this._getProperty(property);
+            }
+        }
+
+        /**
+         * Get Style String
+         * @param {HTMLElement} _element
+         * @param {string} property
+         * @return {string} Style String
+         */
+        static css(_element, property) {
             if(_element) {
                 return this._getProperty(property, _element);
             } else {
                 return this._getProperty(property);
             }
+        }
+
+        /**
+         * @param {Node|Container} child
+         */
+        appendChild(child) {
+            if(child instanceof Container) {
+                child = child.getContainer();
+            }
+            this._container.appendChild(child);
         }
 
         /**
@@ -616,22 +781,89 @@ div {
              * @private
              */
             this._container = new Container(id);
-            /**
-             * @type {Selector}
-             * @private
-             */
-            this._years_select = new Selector(document.getElementById("years_select"));
-            /**
-             * @type {Selector}
-             * @private
-             */
-            this._months_select = new Selector(document.getElementById("months_select"));
             //Initialize
-            this._container.addClass("calendar");
+            this._initialize();
+            /**
+             * @type {Selector}
+             * @private
+             */
+            this._years_select = new Selector(this.__years_selector);
+            /**
+             * @type {Selector}
+             * @private
+             */
+            this._months_select = new Selector(this.__months_selector);
+            //Add Event Listener
+            this._years_select.leftButton.addEventListener("click", () => {
+                this.lastYear();
+            });
+            this._years_select.rightButton.addEventListener("click", () => {
+                this.nextYear();
+            });
+            this._years_select.downButton.addEventListener("click", () => {
+                this.selectYear();
+            });
+            this._months_select.leftButton.addEventListener("click", () => {
+                this.lastMonth();
+            });
+            this._months_select.rightButton.addEventListener("click", () => {
+                this.nextMonth();
+            });
+            this._months_select.downButton.addEventListener("click", () => {
+                this.selectMonth();
+            });
             console.log(Lunar.getLunar(2016, 8, 22));
         }
 
         /************* Begin of Public Functions *************/
+        /**
+         * Set Last Year
+         */
+        lastYear() {
+            let now = this._date.getFullYear();
+            if(now <= 1970) {
+                return;
+            }
+            this.setYear(now - 1);
+        }
+
+        /**
+         * Set Next Year
+         */
+        nextYear() {
+            let now = this._date.getFullYear();
+            if(now >= 2089) {
+                return;
+            }
+            this.setYear(now + 1);
+        }
+
+        /**
+         * Set Last Month
+         */
+        lastMonth() {
+            let now = this._date.getMonth() + 1;
+            if(now > 1) {
+                this.setMonth(now - 1);
+            } else if(this._date.getFullYear() > 1970) {
+                this.lastYear();
+                this.setMonth(12);
+            }
+        }
+
+        /**
+         * Set Next Month
+         */
+        nextMonth() {
+            let now = this._date.getMonth() + 1;
+            if(now < 12) {
+                this.setMonth(now + 1);
+            } else if(this._date.getFullYear() < 2089) {
+                this.nextYear();
+                this.setMonth(1);
+            }
+        }
+
         /**
          * Set Year
          * @param {number} year A Number Between 1970 and 2089, It Must Great Than or Equal To 1970 And Less Than 2090
@@ -691,8 +923,151 @@ div {
             return this._date.getDay();
         }
 
+        selectYear() {
+        }
+
+        selectMonth() {
+        }
+
         /************* End of Public Functions *************/
         /************* Begin of Private Functions *************/
+        /**
+         * @private
+         */
+        _initialize() {
+            //noinspection JSUnresolvedFunction
+            this.__root = this._container.getContainer().createShadowRoot();
+            //Style Sheet
+            let colour = document.createElement("style");
+            colour.innerHTML = CALENDAR_COLOUR;
+            let style = document.createElement("style");
+            style.innerHTML = CALENDAR_STYLE;
+            this.__root.appendChild(colour);
+            this.__root.appendChild(style);
+            //title
+            {
+                this.__title = new Container();
+                this.__title.addClass("title");
+                this.__title.addClass("b_dark");
+                //years selector
+                {
+                    this.__years_selector = new Container();
+                    this.__years_selector.addClass("c_light");
+                    this.__years_selector.addClass("f_light");
+                    this.__years_selector.getContainer().innerHTML = this.getYear();
+                }
+                this.__title.appendChild(this.__years_selector);
+                //months selector
+                {
+                    this.__months_selector = new Container();
+                    this.__months_selector.addClass("c_light");
+                    this.__months_selector.addClass("f_light");
+                    this.__months_selector.getContainer().innerHTML = this.getMonth();
+                }
+                this.__title.appendChild(this.__months_selector);
+            }
+            this.__root.appendChild(this.__title.getContainer());
+            //content
+            {
+                this.__content = new Container();
+                this.__content.addClass("content");
+                this.__content.addClass("b_light");
+                //rows
+                /**
+                 * @type {{row: Container, columns: {column: Container, content: {date: Container, lunar: Container, festival: Container}}[]}[]}
+                 * @private
+                 */
+                this.__content_rows = [];
+                for(let row = 0; row < 5; row++) {
+                    this.__content_rows[row] = {};
+                    this.__content_rows[row].row = new Container();
+                    this.__content_rows[row].row.addClass("content_row");
+                    //columns
+                    this.__content_rows[row].columns = [];
+                    for(let column = 0; column < 7; column++) {
+                        this.__content_rows[row].columns[column] = {};
+                        this.__content_rows[row].columns[column].column = new Container();
+                        this.__content_rows[row].columns[column].column.addClass("content_column");
+                        {
+                            this.__content_rows[row].columns[column].content = {};
+                            this.__content_rows[row].columns[column].content.date = new Container();
+                            this.__content_rows[row].columns[column].content.date.addClass("date");
+                            this.__content_rows[row].columns[column].content.lunar = new Container();
+                            this.__content_rows[row].columns[column].content.lunar.addClass("lunar");
+                            this.__content_rows[row].columns[column].content.festival = new Container();
+                            this.__content_rows[row].columns[column].content.festival.addClass("festival");
+                        }
+                        this.__content_rows[row].columns[column].column.appendChild(this.__content_rows[row].columns[column].content.date);
+                        this.__content_rows[row].columns[column].column.appendChild(this.__content_rows[row].columns[column].content.lunar);
+                        this.__content_rows[row].columns[column].column.appendChild(this.__content_rows[row].columns[column].content.festival);
+                        this.__content_rows[row].row.appendChild(this.__content_rows[row].columns[column].column);
+                    }
+                    this.__content.appendChild(this.__content_rows[row].row);
+                }
+            }
+            this.__root.appendChild(this.__content.getContainer());
+            //years
+            {
+                this.__years = new Container();
+                this.__years.addClass("years");
+                this.__years.addClass("b_light");
+                this.__years.addClass("hide");
+                //rows
+                /**
+                 * @type {{row: Container, columns: Container[]}[]}
+                 * @private
+                 */
+                this.__years_rows = [];
+                for(let row = 0; row < 3; row++) {
+                    this.__years_rows[row] = {};
+                    this.__years_rows[row].row = new Container();
+                    this.__years_rows[row].row.addClass("years_row");
+                    //columns
+                    this.__years_rows[row].columns = [];
+                    for(let column = 0; column < 5; column++) {
+                        this.__years_rows[row].columns[column] = new Container();
+                        this.__years_rows[row].columns[column].addClass("years_column");
+                        this.__years_rows[row].columns[column].addClass("center_text");
+                        this.__years_rows[row].columns[column].addClass("o_normal");
+                        this.__years_rows[row].row.appendChild(this.__years_rows[row].columns[column]);
+                    }
+                    this.__years.appendChild(this.__years_rows[row].row);
+                }
+            }
+            this.__root.appendChild(this.__years.getContainer());
+            //months
+            {
+                this.__months = new Container();
+                this.__months.addClass("months");
+                this.__months.addClass("b_light");
+                this.__months.addClass("hide");
+                let index = 0;
+                //rows
+                /**
+                 * @type {{row: Container, columns: Container[]}[]}
+                 * @private
+                 */
+                this.__months_rows = [];
+                for(let row = 0; row < 3; row++) {
+                    this.__months_rows[row] = {};
+                    this.__months_rows[row].row = new Container();
+                    this.__months_rows[row].row.addClass("months_row");
+                    //columns
+                    this.__months_rows[row].columns = [];
+                    for(let column = 0; column < 4; column++) {
+                        this.__months_rows[row].columns[column] = new Container();
+                        this.__months_rows[row].columns[column].addClass("months_column");
+                        this.__months_rows[row].columns[column].addClass("center_text");
+                        this.__months_rows[row].columns[column].addClass("o_normal");
+                        this.__months_rows[row].columns[column].getContainer().innerHTML = MONTH_OF_YEAR[index++];
+                        this.__months_rows[row].row.appendChild(this.__months_rows[row].columns[column]);
+                    }
+                    this.__months.appendChild(this.__months_rows[row].row);
+                }
+            }
+            this.__root.appendChild(this.__months.getContainer());
+        }
+
         /************* End of Private Functions *************/
     }
 

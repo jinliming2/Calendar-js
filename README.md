@@ -18,6 +18,9 @@
 
 ***第一次完全使用英文注释，如有英语语法错误，请告知，谢谢！***
 
+### 引用说明
+农历计算部分相关算法参考自[zzyss86/LunarCalendar](https://github.com/zzyss86/LunarCalendar)。
+
 ## Usage 使用方法
 1. 从GitHub Release[![GitHub Release](https://img.shields.io/github/release/772807886/Calendar-js.svg)](https://github.com/772807886/Calendar-js/releases)下载最新版本类库，包含压缩版的calendar.min.css、calendar.min.js与未压缩版的calendar.css、calendar.js。
 2. 在页面中包含calendar.min.css（开发环境下包含未压缩版：calendar.css）和calendar.min.js（开发环境下包含未压缩版：calendar.js）。
