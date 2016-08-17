@@ -10,6 +10,7 @@
         window.Calendar_Config = {};
     }
     const {
+        FIRST_DAY_OF_WEEK = 0,
         DAY_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         MONTH_OF_YEAR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         HEAVENLY_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"],
@@ -136,9 +137,33 @@ div {
     height: 85%;
 }
 
+.week_row {
+    width: 100%;
+    height: 4%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.week_column {
+    width: 14.285%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    outline: 1px solid;
+    text-align: center;
+    word-wrap: break-word;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
 .content_row {
     width: 100%;
-    height: 20%;
+    height: 16%;
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
@@ -783,6 +808,7 @@ div {
             this._container = new Container(id);
             //Initialize
             this._initialize();
+            this._reloadMonth();
             /**
              * @type {Selector}
              * @private
@@ -812,7 +838,6 @@ div {
             this._months_select.downButton.addEventListener("click", () => {
                 this.selectMonth();
             });
-            console.log(Lunar.getLunar(2016, 8, 22));
         }
 
         /************* Begin of Public Functions *************/
@@ -876,6 +901,8 @@ div {
                 throw "Range Error: Year Must in [1970, 2090)!";
             }
             this._date.setFullYear(year);
+            this.__years_selector.getContainer().innerHTML = year.toString();
+            this._reloadMonth();
         }
 
         /**
@@ -890,6 +917,8 @@ div {
                 throw "Range Error: Month Must in [1, 12]!";
             }
             this._date.setMonth(month - 1);
+            this.__months_selector.getContainer().innerHTML = month.toString();
+            this._reloadMonth();
         }
 
         /**
@@ -900,7 +929,7 @@ div {
             if(!Number.isSafeInteger(date)) {
                 throw "Parameter Error: Date Must Be An Integer!";
             }
-            let max = new Date(this._date.getFullYear(), this._date.getMonth() + 1, 0).getDate();
+            let max = this._getMaxDate();
             if(date < 1 || date > max) {
                 throw "Range Error: Date Must in [1, " + max + "] This Month!";
             }
@@ -972,13 +1001,28 @@ div {
                 this.__content = new Container();
                 this.__content.addClass("content");
                 this.__content.addClass("b_light");
+                //weeks
+                {
+                    this.__content_weeks = {};
+                    this.__content_weeks.week = [];
+                    this.__content_weeks.row = new Container();
+                    this.__content_weeks.row.addClass("week_row");
+                    let index = 0;
+                    for(let i = 0; i < 7; i++) {
+                        this.__content_weeks.week[i] = new Container();
+                        this.__content_weeks.week[i].addClass("week_column");
+                        this.__content_weeks.week[i].getContainer().innerHTML = DAY_OF_WEEK[(FIRST_DAY_OF_WEEK + index++) % 7];
+                        this.__content_weeks.row.appendChild(this.__content_weeks.week[i]);
+                    }
+                }
+                this.__content.appendChild(this.__content_weeks.row);
                 //rows
                 /**
                  * @type {{row: Container, columns: {column: Container, content: {date: Container, lunar: Container, festival: Container}}[]}[]}
                  * @private
                  */
                 this.__content_rows = [];
-                for(let row = 0; row < 5; row++) {
+                for(let row = 0; row < 6; row++) {
                     this.__content_rows[row] = {};
                     this.__content_rows[row].row = new Container();
                     this.__content_rows[row].row.addClass("content_row");
@@ -1066,6 +1110,58 @@ div {
                 }
             }
             this.__root.appendChild(this.__months.getContainer());
+        }
+
+        /**
+         * @private
+         */
+        _reloadMonth() {
+            let d = new Date(this._date.getFullYear(), this._date.getMonth(), 1);
+            d.setDate(-(d.getDay() - FIRST_DAY_OF_WEEK + 6) % 7);
+            let [year, month, date] = [d.getFullYear(), d.getMonth(), d.getDate()];
+            for(let row = 0; row < 6; row++) {
+                for(let column = 0; column < 7; column++) {
+                    //Remove Class
+                    this.__content_rows[row].columns[column].column.removeClass("o_light");
+                    this.__content_rows[row].columns[column].column.removeClass("o_normal");
+                    this.__content_rows[row].columns[column].content.date.removeClass("lastMonth");
+                    this.__content_rows[row].columns[column].content.date.removeClass("nextMonth");
+                    this.__content_rows[row].columns[column].content.lunar.removeClass("lastMonth");
+                    this.__content_rows[row].columns[column].content.lunar.removeClass("nextMonth");
+                    this.__content_rows[row].columns[column].content.festival.removeClass("lastMonth");
+                    this.__content_rows[row].columns[column].content.festival.removeClass("nextMonth");
+                    //Set Value
+                    let lunar = Lunar.getLunar(year, month, date);
+                    this.__content_rows[row].columns[column].content.date.getContainer().innerHTML = d.getDate().toString();
+                    this.__content_rows[row].columns[column].content.lunar.getContainer().innerHTML = lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName;
+                    this.__content_rows[row].columns[column].content.festival.getContainer().innerHTML = "";
+                    //Add Class
+                    if(month + 1 < this.getMonth()) {
+                        this.__content_rows[row].columns[column].column.addClass("o_light");
+                        this.__content_rows[row].columns[column].content.date.addClass("lastMonth");
+                        this.__content_rows[row].columns[column].content.lunar.addClass("lastMonth");
+                        this.__content_rows[row].columns[column].content.festival.addClass("lastMonth");
+                    } else if(month + 1 == this.getMonth()) {
+                        this.__content_rows[row].columns[column].column.addClass("o_normal");
+                    } else {
+                        this.__content_rows[row].columns[column].column.addClass("o_light");
+                        this.__content_rows[row].columns[column].content.date.addClass("nextMonth");
+                        this.__content_rows[row].columns[column].content.lunar.addClass("nextMonth");
+                        this.__content_rows[row].columns[column].content.festival.addClass("nextMonth");
+                    }
+                    //Next Day
+                    d.setDate(date + 1);
+                    [year, month, date] = [d.getFullYear(), d.getMonth(), d.getDate()];
+                }
+            }
+        }
+
+        /**
+         * @return {number}
+         * @private
+         */
+        _getMaxDate() {
+            return new Date(this._date.getFullYear(), this._date.getMonth() + 1, 0).getDate();
         }
 
         /************* End of Private Functions *************/
