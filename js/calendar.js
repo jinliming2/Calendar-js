@@ -1204,7 +1204,7 @@ div {
                     //Set Value
                     let lunar = Lunar.getLunar(year, month, date);
                     this.__content_rows[row].columns[column].content.date.html(d.getDate().toString());
-                    this.__content_rows[row].columns[column].content.lunar.html(lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName);
+                    this.__content_rows[row].columns[column].content.lunar.html(lunar.term ? lunar.term : lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName);
                     this.__content_rows[row].columns[column].content.festival.html("");
                     //Add Class
                     if(month + 1 < this.getMonth()) {
