@@ -793,6 +793,17 @@ div {
         getContainer() {
             return this._container;
         }
+
+        /**
+         * @param {string} innerHTML
+         * @return {string}
+         */
+        html(innerHTML) {
+            if(innerHTML) {
+                this._container.innerHTML = innerHTML;
+            }
+            return this._container.innerHTML;
+        }
     }
     /************* End of Tool Classes Definition *************/
     /**
@@ -908,7 +919,7 @@ div {
                 throw "Range Error: Year Must in [1970, 2090)!";
             }
             this._date.setFullYear(year);
-            this.__years_selector.getContainer().innerHTML = year.toString();
+            this.__years_selector.html(year.toString());
             this._reloadMonth();
         }
 
@@ -923,9 +934,22 @@ div {
             if(month <= 0 || month > 12) {
                 throw "Range Error: Month Must in [1, 12]!";
             }
+
+            let m = this.getMonth() - 1;
+            let current = this.__months_rows[Math.floor(m / 4)].columns[m % 4];
+            //Reset Highlight
+            current.removeClass("b_dark");
+            current.removeClass("c_light");
+
             this._date.setMonth(month - 1);
-            this.__months_selector.getContainer().innerHTML = month.toString();
+            this.__months_selector.html(month.toString());
             this._reloadMonth();
+
+            month--;
+            current = this.__months_rows[Math.floor(month / 4)].columns[month % 4];
+            //Highlight
+            current.addClass("b_dark");
+            current.addClass("c_light");
         }
 
         /**
@@ -968,6 +992,19 @@ div {
                 this.__content.removeClass("hide");
                 this.__years.addClass("hide");
             }
+            let row = 0, column = 0;
+            for(let year = this.getYear() - 12; year <= this.getYear() + 12; year++) {
+                this.__years_rows[row].columns[column].getContainer().dataset.year = year;
+                this.__years_rows[row].columns[column++].html(year.toString());
+                if(column >= 5) {
+                    row++;
+                    column = 0;
+                }
+            }
+            let current = this.__years_rows[2].columns[2];
+            //Highlight
+            current.addClass("b_dark");
+            current.addClass("c_light");
         }
 
         selectMonth() {
@@ -1006,7 +1043,7 @@ div {
                     this.__years_selector = new Container();
                     this.__years_selector.addClass("c_light");
                     this.__years_selector.addClass("f_light");
-                    this.__years_selector.getContainer().innerHTML = this.getYear();
+                    this.__years_selector.html(this.getYear());
                 }
                 this.__title.appendChild(this.__years_selector);
                 //months selector
@@ -1014,7 +1051,7 @@ div {
                     this.__months_selector = new Container();
                     this.__months_selector.addClass("c_light");
                     this.__months_selector.addClass("f_light");
-                    this.__months_selector.getContainer().innerHTML = this.getMonth();
+                    this.__months_selector.html(this.getMonth());
                 }
                 this.__title.appendChild(this.__months_selector);
             }
@@ -1034,7 +1071,7 @@ div {
                     for(let i = 0; i < 7; i++) {
                         this.__content_weeks.week[i] = new Container();
                         this.__content_weeks.week[i].addClass("week_column");
-                        this.__content_weeks.week[i].getContainer().innerHTML = DAY_OF_WEEK[(FIRST_DAY_OF_WEEK + index++) % 7];
+                        this.__content_weeks.week[i].html(DAY_OF_WEEK[(FIRST_DAY_OF_WEEK + index++) % 7]);
                         this.__content_weeks.row.appendChild(this.__content_weeks.week[i]);
                     }
                 }
@@ -1100,6 +1137,11 @@ div {
                     }
                     this.__years.appendChild(this.__years_rows[row].row);
                 }
+                //Events
+                this.__years.getContainer().addEventListener("click", (e) => {
+                    this.setYear(parseInt(e.target.dataset.year));
+                    this.selectYear();
+                }, false);
             }
             this.__root.appendChild(this.__years.getContainer());
             //months
@@ -1126,11 +1168,17 @@ div {
                         this.__months_rows[row].columns[column].addClass("months_column");
                         this.__months_rows[row].columns[column].addClass("center_text");
                         this.__months_rows[row].columns[column].addClass("o_normal");
-                        this.__months_rows[row].columns[column].getContainer().innerHTML = MONTH_OF_YEAR[index++];
+                        this.__months_rows[row].columns[column].getContainer().dataset.month = index + 1;
+                        this.__months_rows[row].columns[column].html(MONTH_OF_YEAR[index++]);
                         this.__months_rows[row].row.appendChild(this.__months_rows[row].columns[column]);
                     }
                     this.__months.appendChild(this.__months_rows[row].row);
                 }
+                //Events
+                this.__months.getContainer().addEventListener("click", (e) => {
+                    this.setMonth(parseInt(e.target.dataset.month));
+                    this.selectMonth();
+                }, false);
             }
             this.__root.appendChild(this.__months.getContainer());
         }
@@ -1155,9 +1203,9 @@ div {
                     this.__content_rows[row].columns[column].content.festival.removeClass("nextMonth");
                     //Set Value
                     let lunar = Lunar.getLunar(year, month, date);
-                    this.__content_rows[row].columns[column].content.date.getContainer().innerHTML = d.getDate().toString();
-                    this.__content_rows[row].columns[column].content.lunar.getContainer().innerHTML = lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName;
-                    this.__content_rows[row].columns[column].content.festival.getContainer().innerHTML = "";
+                    this.__content_rows[row].columns[column].content.date.html(d.getDate().toString());
+                    this.__content_rows[row].columns[column].content.lunar.html(lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName);
+                    this.__content_rows[row].columns[column].content.festival.html("");
                     //Add Class
                     if(month + 1 < this.getMonth()) {
                         this.__content_rows[row].columns[column].column.addClass("o_light");
