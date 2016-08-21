@@ -1170,6 +1170,10 @@ div {
                         this.__months_rows[row].columns[column].addClass("o_normal");
                         this.__months_rows[row].columns[column].getContainer().dataset.month = index + 1;
                         this.__months_rows[row].columns[column].html(MONTH_OF_YEAR[index++]);
+                        if(index == this.getMonth()) {
+                            this.__months_rows[row].columns[column].addClass("b_dark");
+                            this.__months_rows[row].columns[column].addClass("c_light");
+                        }
                         this.__months_rows[row].row.appendChild(this.__months_rows[row].columns[column]);
                     }
                     this.__months.appendChild(this.__months_rows[row].row);
@@ -1207,6 +1211,8 @@ div {
                     this.__content_rows[row].columns[column].content.lunar.html(lunar.term ? lunar.term : lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName);
                     this.__content_rows[row].columns[column].content.festival.html("");
                     //Add Class
+                    this.__content_rows[row].columns[column].column.removeClass("b_dark");
+                    this.__content_rows[row].columns[column].column.removeClass("c_light");
                     if(month + 1 < this.getMonth()) {
                         this.__content_rows[row].columns[column].column.addClass("o_light");
                         this.__content_rows[row].columns[column].content.date.addClass("lastMonth");
@@ -1214,6 +1220,10 @@ div {
                         this.__content_rows[row].columns[column].content.festival.addClass("lastMonth");
                     } else if(month + 1 == this.getMonth()) {
                         this.__content_rows[row].columns[column].column.addClass("o_normal");
+                        if(date == this.getDate()) {
+                            this.__content_rows[row].columns[column].column.addClass("b_dark");
+                            this.__content_rows[row].columns[column].column.addClass("c_light");
+                        }
                     } else {
                         this.__content_rows[row].columns[column].column.addClass("o_light");
                         this.__content_rows[row].columns[column].content.date.addClass("nextMonth");
