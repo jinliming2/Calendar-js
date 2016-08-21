@@ -221,11 +221,14 @@ div {
 
 .months_row, .years_row {
     width: 100%;
-    height: 33.333%;
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
     align-items: stretch;
+}
+
+.months_row {
+    height: 33.333%;
 }
 
 .months_column {
@@ -234,6 +237,10 @@ div {
     flex-shrink: 0;
     outline: 1px solid;
     cursor: pointer;
+}
+
+.years_row {
+    height: 20%;
 }
 
 .years_column {
@@ -953,9 +960,25 @@ div {
         }
 
         selectYear() {
+            this.__months.addClass("hide");
+            if(this.__years.hasClass("hide")) {
+                this.__content.addClass("hide");
+                this.__years.removeClass("hide");
+            } else {
+                this.__content.removeClass("hide");
+                this.__years.addClass("hide");
+            }
         }
 
         selectMonth() {
+            this.__years.addClass("hide");
+            if(this.__months.hasClass("hide")) {
+                this.__content.addClass("hide");
+                this.__months.removeClass("hide");
+            } else {
+                this.__content.removeClass("hide");
+                this.__months.addClass("hide");
+            }
         }
 
         /************* End of Public Functions *************/
@@ -1062,7 +1085,7 @@ div {
                  * @private
                  */
                 this.__years_rows = [];
-                for(let row = 0; row < 3; row++) {
+                for(let row = 0; row < 5; row++) {
                     this.__years_rows[row] = {};
                     this.__years_rows[row].row = new Container();
                     this.__years_rows[row].row.addClass("years_row");
