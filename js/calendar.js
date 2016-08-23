@@ -968,6 +968,25 @@ div {
                 throw "Range Error: Date Must in [1, " + max + "] This Month!";
             }
             this._date.setDate(date);
+            //Highlight
+            let current = this.__content.getContainer().querySelector(".b_dark");
+            current.classList.remove("b_dark");
+            current.classList.remove("c_light");
+            let month = this.getMonth();
+            for(let i = 0; i < this.__content_rows.length; i++) {
+                let j = 0;
+                for(; j < this.__content_rows[i].columns.length; j++) {
+                    let target = this.__content_rows[i].columns[j].column.getContainer();
+                    if(target.dataset.month == month && target.dataset.date == date) {
+                        target.classList.add("b_dark");
+                        target.classList.add("c_light");
+                        break;
+                    }
+                }
+                if(j < this.__content_rows.length) {
+                    break;
+                }
+            }
         }
 
         getYear() {
@@ -1111,6 +1130,41 @@ div {
                     }
                     this.__content.appendChild(this.__content_rows[row].row);
                 }
+                //Events
+                this.__content.getContainer().addEventListener("click", (e) => {
+                    let event = (target) => {
+                        let m = target.dataset.month,
+                            d = target.dataset.date;
+                        if(m != this.getMonth()) {
+                            this.setMonth(parseInt(m));
+                        }
+                        if(d != this.getDate()) {
+                            this.setDate(parseInt(d));
+                        }
+                    };
+                    //noinspection JSUnresolvedVariable
+                    if(e.path) {  //For Chrome
+                        //noinspection JSUnresolvedVariable
+                        for(let target of e.path) {
+                            if(target.classList && target.classList.contains("content_column")) {
+                                event(target);
+                                break;
+                            }
+                        }
+                    } else {
+                        let loop = (target) => {
+                            if(target == this.__content.getContainer()) {
+                                return;
+                            }
+                            if(target.classList.contains("content_column")) {
+                                event(target);
+                            } else {
+                                loop(target.parentNode);
+                            }
+                        };
+                        loop(e.target);
+                    }
+                }, false);
             }
             this.__root.appendChild(this.__content.getContainer());
             //years
@@ -1213,6 +1267,9 @@ div {
                     this.__content_rows[row].columns[column].content.date.html(d.getDate().toString());
                     this.__content_rows[row].columns[column].content.lunar.html(lunar.term ? lunar.term : lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName);
                     this.__content_rows[row].columns[column].content.festival.html("");
+                    //Save Data Set
+                    this.__content_rows[row].columns[column].column.getContainer().dataset.month = month + 1;
+                    this.__content_rows[row].columns[column].column.getContainer().dataset.date = date;
                     //Add Class
                     this.__content_rows[row].columns[column].column.removeClass("b_dark");
                     this.__content_rows[row].columns[column].column.removeClass("c_light");
