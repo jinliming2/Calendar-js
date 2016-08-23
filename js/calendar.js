@@ -808,6 +808,68 @@ div {
             return this._container.innerHTML;
         }
     }
+    /**
+     * Event - Events Manager
+     */
+    class Event {
+        constructor() {
+            /**
+             * @type {{handler: function, args: *}[]|null}
+             * @private
+             */
+            this._events = [];
+        }
+
+        /**
+         * @param {function} handler
+         * @param {*} [args]
+         */
+        add(handler, args) {
+            this._events[this._events.length] = {
+                handler: handler,
+                args: args
+            };
+        }
+
+        /**
+         * @param {function} handler
+         */
+        remove(handler) {
+            for(let event in this._events) {
+                if(this._events.hasOwnProperty(event) && this._events[event].handler == handler) {
+                    this._events[event] = null;
+                }
+            }
+        }
+
+        /**
+         * @param {Object} caller
+         * @return {boolean}
+         */
+        call(caller) {
+            let flag = true;
+            for(let event of this._events) {
+                if(event == null) {
+                    continue;
+                }
+                flag = event.handler.call(caller, event.args) && flag;
+            }
+            return flag;
+        }
+
+        //noinspection JSUnusedGlobalSymbols
+        /**
+         * List All of Events By Console.log
+         */
+        list() {
+            for(let event of this._events) {
+                if(event == null) {
+                    continue;
+                }
+                console.log(event);
+            }
+        }
+    }
     /************* End of Tool Classes Definition *************/
     /**
      * Calendar Library
@@ -817,6 +879,18 @@ div {
          * @param {string|HTMLElement} id
          */
         constructor(id) {
+            /**
+             * Debug Message Flag
+             * @type {boolean}
+             * @private
+             */
+            this.___debug = true;
+            /**
+             * Event Ended Flag
+             * @type {Symbol}
+             * @private
+             */
+            this.___ENDED = Symbol("ENDED");
             /**
              * @type {Date}
              * @private
@@ -860,6 +934,47 @@ div {
             this._months_select.downButton.addEventListener("click", () => {
                 this.selectMonth();
             });
+            //Event Handler
+            /**
+             * @type {Event}
+             */
+            this.BeforYearChangeEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.BeforMonthChangeEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.BeforDateChangeEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.BeforSelectYearEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.BeforSelectMonthEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.YearChangedEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.MonthChangedEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.DateChangedEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.SelectYearEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.SelectMonthEvent = new Event();
         }
 
         /************* Begin of Public Functions *************/
@@ -922,9 +1037,19 @@ div {
             if(year < 1970 || year >= 2090) {
                 throw "Range Error: Year Must in [1970, 2090)!";
             }
+
+            if(!this.BeforYearChangeEvent.call(this)) {
+                if(this.___debug) {
+                    console.warn("Set Year Ended By Event Returned False!");
+                }
+                return this.___ENDED;
+            }
+
             this._date.setFullYear(year);
             this.__years_selector.html(year.toString());
             this._reloadMonth();
+
+            this.YearChangedEvent.call(this);
         }
 
         /**
@@ -937,6 +1062,13 @@ div {
             }
             if(month <= 0 || month > 12) {
                 throw "Range Error: Month Must in [1, 12]!";
+            }
+
+            if(!this.BeforMonthChangeEvent.call(this)) {
+                if(this.___debug) {
+                    console.warn("Set Month Ended By Event Returned False!");
+                }
+                return this.___ENDED;
             }
 
             let m = this.getMonth() - 1;
@@ -954,6 +1086,8 @@ div {
             //Highlight
             current.addClass("b_dark");
             current.addClass("c_light");
+
+            this.MonthChangedEvent.call(this);
         }
 
         /**
@@ -968,6 +1102,14 @@ div {
             if(date < 1 || date > max) {
                 throw "Range Error: Date Must in [1, " + max + "] This Month!";
             }
+
+            if(!this.BeforDateChangeEvent.call(this)) {
+                if(this.___debug) {
+                    console.warn("Set Date Ended By Event Returned False!");
+                }
+                return this.___ENDED;
+            }
+
             this._date.setDate(date);
             //Highlight
             let current = this.__content.getContainer().querySelector(".b_dark");
@@ -988,6 +1130,8 @@ div {
                     break;
                 }
             }
+
+            this.DateChangedEvent.call(this);
         }
 
         getYear() {
@@ -1007,6 +1151,13 @@ div {
         }
 
         selectYear() {
+            if(!this.BeforSelectYearEvent.call(this)) {
+                if(this.___debug) {
+                    console.warn("Select Year Ended By Event Returned False!");
+                }
+                return this.___ENDED;
+            }
+
             this.__months.addClass("hide");
             if(this.__years.hasClass("hide")) {
                 this.__content.addClass("hide");
@@ -1028,9 +1179,18 @@ div {
             //Highlight
             current.addClass("b_dark");
             current.addClass("c_light");
+
+            this.SelectYearEvent.call(this);
         }
 
         selectMonth() {
+            if(!this.BeforSelectMonthEvent.call(this)) {
+                if(this.___debug) {
+                    console.warn("Select Month Ended By Event Returned False!");
+                }
+                return this.___ENDED;
+            }
+
             this.__years.addClass("hide");
             if(this.__months.hasClass("hide")) {
                 this.__content.addClass("hide");
@@ -1039,6 +1199,8 @@ div {
                 this.__content.removeClass("hide");
                 this.__months.addClass("hide");
             }
+
+            this.SelectMonthEvent.call(this);
         }
 
         /**
@@ -1083,6 +1245,14 @@ div {
                 .replace("{LUNARDATE}", lunar.lunarDayName)
                 .replace("{TERM}", lunar.term || "");
         }
+
+        /**
+         * @param {boolean} status
+         */
+        setDebug(status) {
+            this.___debug = !!status;
+        }
+
         /************* End of Public Functions *************/
         /************* Begin of Private Functions *************/
         /**
