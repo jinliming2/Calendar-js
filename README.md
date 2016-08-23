@@ -19,7 +19,7 @@
 ***第一次完全使用英文注释，如有英语语法错误，请告知，谢谢！***
 
 ### 已知问题
-- Firefox（Nightly 51.0a1）发现在 Shadow Dom 中控制 Element 的 display: none 样式时，会导致页面**崩溃**。
+- Firefox（Nightly 51.0a1 2016-08-09）发现在 Shadow Dom 中控制 Element 的 display: none 样式时，会导致页面**崩溃**。
 
 ### 引用说明
 农历计算部分相关算法参考自 [zzyss86/LunarCalendar](https://github.com/zzyss86/LunarCalendar)。

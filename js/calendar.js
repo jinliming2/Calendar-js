@@ -113,6 +113,9 @@ div {
     const CALENDAR_STYLE = `
 :host {
     outline: 3px double black;
+}
+
+* {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
