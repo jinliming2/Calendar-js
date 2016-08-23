@@ -1133,8 +1133,12 @@ div {
                 //Events
                 this.__content.getContainer().addEventListener("click", (e) => {
                     let event = (target) => {
-                        let m = target.dataset.month,
+                        let y = target.dataset.year,
+                            m = target.dataset.month,
                             d = target.dataset.date;
+                        if(y != this.getYear()) {
+                            this.setYear(parseInt(y));
+                        }
                         if(m != this.getMonth()) {
                             this.setMonth(parseInt(m));
                         }
@@ -1268,6 +1272,7 @@ div {
                     this.__content_rows[row].columns[column].content.lunar.html(lunar.term ? lunar.term : lunar.lunarDayName == DATE_IN_CHINA[0] ? lunar.lunarMonthName : lunar.lunarDayName);
                     this.__content_rows[row].columns[column].content.festival.html("");
                     //Save Data Set
+                    this.__content_rows[row].columns[column].column.getContainer().dataset.year = year;
                     this.__content_rows[row].columns[column].column.getContainer().dataset.month = month + 1;
                     this.__content_rows[row].columns[column].column.getContainer().dataset.date = date;
                     //Add Class
