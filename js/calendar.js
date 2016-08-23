@@ -822,6 +822,7 @@ div {
              * @private
              */
             this._date = new Date();
+            this._date.setHours(0, 0, 0, 0);
             /**
              * @type {Container}
              * @private
@@ -1040,6 +1041,48 @@ div {
             }
         }
 
+        /**
+         * Format Datetime
+         * @param {string} format
+         * @return {string}
+         */
+        format(format) {
+            return Calendar.format(format, this._date);
+        }
+
+        /**
+         * Format Datetime
+         * @param {string} format
+         * @param {Date} datetime
+         * @return {string}
+         */
+        static format(format, datetime) {
+            let year = datetime.getFullYear(),
+                month = (datetime.getMonth() + 1),
+                date = datetime.getDate(),
+                day = DAY_OF_WEEK[datetime.getDay()],
+                hour = datetime.getHours(),
+                minute = datetime.getMinutes(),
+                second = datetime.getSeconds(),
+                millisecond = datetime.getMilliseconds();
+            let lunar = Lunar.getLunar(year, month - 1, date);
+            return format.replace("{YEAR}", year.toString())
+                .replace("{year}", year.toString().substr(-2))
+                .replace("{MONTH}", month.toString())
+                .replace("{DATE}", date.toString())
+                .replace("{WEEKDAY", day)
+                .replace("{HOUR}", hour.toString())
+                .replace("{MINUTE}", minute.toString())
+                .replace("{SECOND}", second.toString())
+                .replace("{MILLISECOND}", millisecond.toString())
+                .replace("{GANZHIYEAR}", lunar.ganZhiYear)
+                .replace("{GANZHIMONTH}", lunar.ganZhiMonth)
+                .replace("{GANZHIDAY}", lunar.ganZhiDay)
+                .replace("{ZODIAC}", lunar.zodiac)
+                .replace("{LUNARMONTH}", lunar.lunarMonthName)
+                .replace("{LUNARDATE}", lunar.lunarDayName)
+                .replace("{TERM}", lunar.term || "");
+        }
         /************* End of Public Functions *************/
         /************* Begin of Private Functions *************/
         /**
