@@ -1220,12 +1220,13 @@ div {
          * @param {int} date
          */
         static getInformation(year, month, date) {
-            let lunar = Lunar.getLunar(year, month, date);
+            let lunar = Lunar.getLunar(year, month - 1, date);
             return {
                 solar: {
                     year: year,
                     month: month,
                     date: date,
+                    week: DAY_OF_WEEK[new Date(year, month - 1, date).getDay()],
                     zodiac: Lunar.getYearZodiac(year + 1)
                 },
                 lunar: {
