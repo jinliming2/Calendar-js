@@ -23,8 +23,8 @@
     let update = function() {
         let info = obj.getInformation();
         information.innerHTML = `
-<h1>${info.solar.year}年${info.solar.month}月${info.solar.date}日 ${info.solar.week}</h1>
-<h2>${info.lunar.yearName}${info.solar.zodiac}年 ${info.lunar.monthName}月 ${info.lunar.dayName}日</h2>
+<h1>${info.solar.year}年${info.solar.month}月${info.solar.date}日 ${info.solar.week} ${info.solar.zodiac}年</h1>
+<h2>${info.lunar.yearName}${info.lunar.zodiac}年 ${info.lunar.monthName}月 ${info.lunar.dayName}日</h2>
 <h3>农历 ${info.lunar.zodiac}年${info.lunar.month}${info.lunar.date}${info.lunar.term ? " " + info.lunar.term : ""}</h3>
 `;
         return true;
