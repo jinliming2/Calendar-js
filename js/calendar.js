@@ -1082,6 +1082,10 @@ div {
             current.removeClass("b_dark");
             current.removeClass("c_light");
 
+            let setterMaxDate = this._getMaxDate(this._date.getFullYear(), month - 1);
+            if(this._date.getDate() > setterMaxDate) {
+                this._date.setDate(setterMaxDate);
+            }
             this._date.setMonth(month - 1);
             this.__months_selector.html(month.toString());
             this._reloadMonth();
@@ -1563,11 +1567,13 @@ div {
         }
 
         /**
+         * @param {int} [year]
+         * @param {int} [month]
          * @return {number}
          * @private
          */
-        _getMaxDate() {
-            return new Date(this._date.getFullYear(), this._date.getMonth() + 1, 0).getDate();
+        _getMaxDate(year, month) {
+            return new Date(year || this._date.getFullYear(), (month || this._date.getMonth()) + 1, 0).getDate();
         }
 
         /************* End of Private Functions *************/
