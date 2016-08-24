@@ -1219,6 +1219,8 @@ div {
          * @return {string}
          */
         static format(format, datetime) {
+            format = format || "";
+            datetime = datetime || new Date();
             let year = datetime.getFullYear(),
                 month = (datetime.getMonth() + 1),
                 date = datetime.getDate(),
@@ -1230,13 +1232,19 @@ div {
             let lunar = Lunar.getLunar(year, month - 1, date);
             return format.replace("{YEAR}", year.toString())
                 .replace("{year}", year.toString().substr(-2))
-                .replace("{MONTH}", month.toString())
-                .replace("{DATE}", date.toString())
-                .replace("{WEEKDAY", day)
-                .replace("{HOUR}", hour.toString())
-                .replace("{MINUTE}", minute.toString())
-                .replace("{SECOND}", second.toString())
-                .replace("{MILLISECOND}", millisecond.toString())
+                .replace("{MONTH}", ("0" + month.toString()).substr(-2))
+                .replace("{month}", month.toString())
+                .replace("{DATE}", ("0" + date.toString()).substr(-2))
+                .replace("{date}", date.toString())
+                .replace("{WEEKDAY}", day)
+                .replace("{HOUR}", ("0" + hour.toString()).substr(-2))
+                .replace("{hour}", hour.toString())
+                .replace("{MINUTE}", ("0" + minute.toString()).substr(-2))
+                .replace("{minute}", minute.toString())
+                .replace("{SECOND}", ("0" + second.toString()).substr(-2))
+                .replace("{second}", second.toString())
+                .replace("{MILLISECOND}", ("00" + millisecond.toString()).substr(-3))
+                .replace("{millisecond}", millisecond.toString())
                 .replace("{GANZHIYEAR}", lunar.ganZhiYear)
                 .replace("{GANZHIMONTH}", lunar.ganZhiMonth)
                 .replace("{GANZHIDAY}", lunar.ganZhiDay)
