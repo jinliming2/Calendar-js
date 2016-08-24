@@ -1203,6 +1203,37 @@ div {
             this.SelectMonthEvent.call(this);
         }
 
+        getInformation() {
+            return Calendar.getInformation(this.getYear(), this.getMonth(), this.getDate());
+        }
+
+        /**
+         * @param {int} year
+         * @param {int} month
+         * @param {int} date
+         */
+        static getInformation(year, month, date) {
+            let lunar = Lunar.getLunar(year, month, date);
+            return {
+                solar: {
+                    year: year,
+                    month: month,
+                    date: date,
+                    zodiac: Lunar.getYearZodiac(year + 1)
+                },
+                lunar: {
+                    year: lunar.year,
+                    month: lunar.lunarMonthName,
+                    date: lunar.lunarDayName,
+                    yearName: lunar.ganZhiYear,
+                    monthName: lunar.ganZhiMonth,
+                    dayName: lunar.ganZhiDay,
+                    zodiac: lunar.zodiac,
+                    term: lunar.term
+                }
+            };
+        }
+
         /**
          * Format Datetime
          * @param {string} format
