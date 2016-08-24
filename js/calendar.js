@@ -946,7 +946,7 @@ div {
             /**
              * @type {Event}
              */
-            this.BeforDateChangeEvent = new Event();
+            this.BeforDayChangeEvent = new Event();
             /**
              * @type {Event}
              */
@@ -963,6 +963,10 @@ div {
              * @type {Event}
              */
             this.MonthChangedEvent = new Event();
+            /**
+             * @type {Event}
+             */
+            this.DayChangedEvent = new Event();
             /**
              * @type {Event}
              */
@@ -1050,6 +1054,7 @@ div {
             this._reloadMonth();
 
             this.YearChangedEvent.call(this);
+            this.DateChangedEvent.call(this);
         }
 
         /**
@@ -1088,6 +1093,7 @@ div {
             current.addClass("c_light");
 
             this.MonthChangedEvent.call(this);
+            this.DateChangedEvent.call(this);
         }
 
         /**
@@ -1103,7 +1109,7 @@ div {
                 throw "Range Error: Date Must in [1, " + max + "] This Month!";
             }
 
-            if(!this.BeforDateChangeEvent.call(this)) {
+            if(!this.BeforDayChangeEvent.call(this)) {
                 if(this.___debug) {
                     console.warn("Set Date Ended By Event Returned False!");
                 }
@@ -1131,6 +1137,7 @@ div {
                 }
             }
 
+            this.DayChangedEvent.call(this);
             this.DateChangedEvent.call(this);
         }
 
