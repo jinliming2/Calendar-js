@@ -16,8 +16,22 @@
 </head>
 <body>
 <div id="calendar" style="width: 600px; height: 500px;"></div>
+<div id="information"></div>
 <script>
     let obj = new Calendar("calendar");  //构造Calendar对象
+    let information = document.getElementById("information");
+    let update = function() {
+        let info = obj.getInformation();
+        information.innerHTML = `
+<h1>${info.solar.year}年${info.solar.month}月${info.solar.date}日 ${info.solar.week}</h1>
+<h2>${info.lunar.yearName}${info.solar.zodiac}年 ${info.lunar.monthName}月 ${info.lunar.dayName}日</h2>
+<h3>农历 ${info.lunar.zodiac}年${info.lunar.month}${info.lunar.date}${info.lunar.term ? " " + info.lunar.term : ""}</h3>
+`;
+        return true;
+    };
+    //绑定日期变化事件
+    obj.DateChangedEvent.add(update);
+    update();
 </script>
 </body>
 </html>
