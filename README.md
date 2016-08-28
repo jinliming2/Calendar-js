@@ -1,5 +1,5 @@
 # Calendar-js
-[![Testing](https://img.shields.io/badge/Calendar--js-Developing-yellow.svg)](https://github.com/772807886/Calendar-js)
+[![Testing](https://img.shields.io/badge/Calendar--js-Testing-yellow.svg)](https://github.com/772807886/Calendar-js)
 [![GitHub license](https://img.shields.io/badge/license-AGPL-blue.svg)](https://raw.githubusercontent.com/772807886/Calendar-js/master/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/772807886/Calendar-js.svg)](https://github.com/772807886/Calendar-js/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/772807886/Calendar-js.svg)](https://github.com/772807886/Calendar-js/network)
