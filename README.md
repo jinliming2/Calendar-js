@@ -9,7 +9,7 @@ An Calendar library written in JS, based on ES2015 and CSS3.
 
 一个使用 JS 编写的日历库，遵循 ES2015 + CSS3 标准
 
-### [Demo 呆萌](http://772807886.github.io/Calendar-js/demo.html)
+### [Demo 呆萌](https://772807886.github.io/Calendar-js/demo.html)
 
 ### Before Use 写在前面
 This Library is based on ES6 and CSS3, so it just work well in newer browsers.
