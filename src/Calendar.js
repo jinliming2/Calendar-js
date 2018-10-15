@@ -37,6 +37,14 @@ class Calendar extends HTMLElement {
     this._root = this.attachShadow({ mode: 'open' });
     this._initEvents();
     this._root.appendChild(body);
+
+    const loaded = new CustomEvent('loaded', {
+      detail: { year: this.year, month: this.month, date: this.date },
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+    this.dispatchEvent(loaded);
   }
   /************* End of Constructor *************/
   /************* Begin of Static Public Fields *************/
