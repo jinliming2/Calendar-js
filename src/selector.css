@@ -24,3 +24,9 @@ div {
   align-items: center;
   cursor: default;
 }
+
+button {
+  border: none;
+  background: none;
+  outline: none;
+}

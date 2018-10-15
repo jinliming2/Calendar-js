@@ -182,11 +182,11 @@ class Calendar extends HTMLElement {
       this.date = setterMaxDate;
     }
     this.setAttribute('month', val);
-    this._date.setMonth(val - 1);
-    this._dom.selector.month.innerHTML = val;
+    --val;
+    this._date.setMonth(val);
+    this._dom.selector.month.innerHTML = MONTH_OF_YEAR[val];
     this._reloadMonth();
 
-    --val;
     current = this._dom.months.children[Math.floor(val / 4)][val % 4];
     // Highlight
     current.classList.add('b_dark');
