@@ -1,37 +1,32 @@
 <!--
-- Calendar-js-demo - https://github.com/772807886/Calendar-js
+- Calendar-js-demo - https://github.com/jinliming2/Calendar-js
 - Created by Liming on 2016/8/1.
 -->
 <!DOCTYPE html>
-<html lang="zh-HanS">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="renderer" content="webkit"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport"
-          content="width=device-width,height=device-height,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="author" content="金黎明,Liming Jin,jinliming2@gmail.com,TianJin China"/>
-    <title>Demo for Calendar-js</title>
-    <script src="./js/calendar.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="renderer" content="webkit"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="author" content="金黎明,Liming Jin,jinliming2@gmail.com,TianJin China"/>
+  <title>Demo for Calendar-js</title>
+  <script type="module" src="./src/Calendar.js"></script>
 </head>
 <body>
-<div id="calendar" style="width: 600px; height: 500px;"></div>
+<demo-calendar id="calendar"></demo-calendar>
 <div id="information"></div>
-<script>
-    let obj = new Calendar("calendar");  //构造Calendar对象
-    let information = document.getElementById("information");
-    let update = function() {
-        let info = obj.getInformation();
-        information.innerHTML = `
+<script defer>
+  const [calendar, information] = [document.getElementById('calendar'), document.getElementById('information')];
+  const update = () => {
+    const info = calendar.information;
+    information.innerHTML = `
 <h1>${info.solar.year}年${info.solar.month}月${info.solar.date}日 ${info.solar.week} ${info.solar.zodiac}年</h1>
 <h2>${info.lunar.yearName}${info.lunar.zodiac}年 ${info.lunar.monthName}月 ${info.lunar.dayName}日</h2>
 <h3>农历 ${info.lunar.zodiac}年${info.lunar.month}${info.lunar.date}${info.lunar.term ? " " + info.lunar.term : ""}</h3>
 `;
-        return true;
-    };
-    //绑定日期变化事件
-    obj.DateChangedEvent.add(update);
-    update();
+  };
+  calendar.addEventListener('date-changed', update);
+  calendar.addEventListener('loaded', update);
 </script>
 </body>
 </html>
