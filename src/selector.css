@@ -1,0 +1,26 @@
+/**
+ * selector.css - https://github.com/jinliming2/Calendar-js
+ * Created by Liming on 2018/10/14.
+ */
+:host {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+* {
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+div {
+  margin: 0;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+}
