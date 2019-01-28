@@ -27,8 +27,9 @@ class Calendar extends HTMLElement {
     this._date = new Date(0);
 
     const now = new Date();
+    this._initFix(this._date, now);
     this.year = this.getAttribute('year') || now.getFullYear();
-    this.month = this.getAttribute('month') ? this.getAttribute('month') : now.getMonth() + 1;
+    this.month = this.getAttribute('month') || (now.getMonth() + 1);
     this.date = this.getAttribute('date') || now.getDate();
 
     this._date.setFullYear(this.year, this.month - 1, this.date);
@@ -216,7 +217,7 @@ class Calendar extends HTMLElement {
 
   set date(val) {
     val = Number(val);
-    if (this.year === val) {
+    if (this.date === val) {
       return;
     }
     if (!Number.isSafeInteger(val)) {
@@ -377,6 +378,29 @@ class Calendar extends HTMLElement {
   }
   /************* End of Public Methods *************/
   /************* Begin of Private Methods *************/
+  _initFix(fixDate, targetDate) {
+    // For fix initialize error temporarily,
+    // which will cause initialization failed
+    // when the year, month or date of initial Date equals to current Date.
+    let fix;
+    let target;
+    fix = fixDate.getFullYear();
+    target = targetDate.getFullYear();
+    if (fix === target) {
+      fixDate.setFullYear(target + 1);
+    }
+    fix = fixDate.getMonth();
+    target = targetDate.getMonth();
+    if (fix === target) {
+      fixDate.setMonth(target + 1);
+    }
+    fix = fixDate.getDate();
+    target = targetDate.getDate();
+    if (fix === target) {
+      fixDate.setDate(target + 1);
+    }
+  }
+
   _initBody(body) {
     this._dom = {
       selector: {
