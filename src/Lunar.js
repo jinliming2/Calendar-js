@@ -145,7 +145,7 @@ export default class {
    * Get Lunar Date By Days Between Target and The First Day of Year
    * @param {number} year
    * @param {number} between
-   * @returns {{year: number, month: number, day: number}}
+   * @returns {{year: number, month: number, date: number}}
    */
   static _getLunarDateByBetween(year, between) {
     const { yearDays, monthDays } = this._getLunarYearDays(year);
@@ -160,7 +160,7 @@ export default class {
         break;
       }
     }
-    return { year, month, day: end - tempDays + 1 };
+    return { year, month, date: end - tempDays + 1 };
   }
 
   /**
@@ -174,7 +174,7 @@ export default class {
    * @returns {number}
    */
   static _getDaysBetweenSolar(year, month, date, year1, month1, date1) {
-    return (new Date(year, month, date).getTime() - new Date(year1, month1, date1).getTime()) / 8.64e7;
+    return (new Date(year1, month1, date1).getTime() - new Date(year, month, date).getTime()) / 8.64e7;
   }
 
   /**
@@ -321,9 +321,9 @@ export default class {
       term: termList[month][date],
       lunarYear: lunarDate.year,
       lunarMonth: lunarDate.month,
-      lunarDay: lunarDate.day,
+      lunarDay: lunarDate.date,
       lunarMonthName: lunarMonthName,
-      lunarDayName: DATE_IN_CHINA[lunarDate.day - 1],
+      lunarDayName: DATE_IN_CHINA[lunarDate.date - 1],
       lunarLeapMonth: lunarLeapMonth,
     };
   }

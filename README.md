@@ -26,6 +26,7 @@ This Library is based on ES6 and CSS3, so it just work well in newer browsers.
 
 ### Known Problems 已知问题
 - ~~Firefox（Nightly 51.0a1 2016-08-09）发现在 Shadow Dom 中控制 Element 的 display: none 样式时，会导致页面**崩溃**~~。
+
   此问题在使用 Web Components v1 标准重构后不再存在，应该是之前 Firefox 实现 v0 规范时的 Bug。
 
 ### Citation 引用说明
@@ -58,6 +59,6 @@ This Library is based on ES6 and CSS3, so it just work well in newer browsers.
 const calendar = document.getElementById('calendar');  // Or querySelector, getElementsByTagName, etc.
 console.log(calendar.year, calendar.month, calendar.date);
 calendar.lastYear();
-lastYear.nextMonth();
+calendar.nextMonth();
 // ......
 ```
