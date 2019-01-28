@@ -174,7 +174,7 @@ export default class {
    * @returns {number}
    */
   static _getDaysBetweenSolar(year, month, date, year1, month1, date1) {
-    return (new Date(year, month, date).getTime() - new Date(year1, month1, date1).getTime()) / 8.64e7;
+    return (new Date(year1, month1, date1).getTime() - new Date(year, month, date).getTime()) / 8.64e7;
   }
 
   /**
